@@ -15,19 +15,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: unzip pulse-source.zip -d source
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: source/package-lock.json
+          cache-dependency-path: package-lock.json
       - run: npm ci
-        working-directory: source
       - run: npm run build
-        working-directory: source
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: source/dist
+          path: dist
   deploy:
     environment:
       name: github-pages
