@@ -54,6 +54,15 @@
       }
     },
     "calls": { "$callId": { ".read": "auth != null && data.child('members').child(auth.uid).val() === true", ".write": "auth != null && newData.child('members').child(auth.uid).val() === true" } },
+    "callInbox": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$callId": {
+          ".write": "auth != null && ((auth.uid === $uid && !newData.exists()) || (!newData.exists() && auth.uid === root.child('calls').child($callId).child('from').val() && root.child('calls').child($callId).child('status').val() !== 'ringing') || (newData.val() === true && root.child('calls').child($callId).child('from').val() === auth.uid && root.child('calls').child($callId).child('to').val() === $uid))",
+          ".validate": "newData.val() === true"
+        }
+      }
+    },
     "presence": { "$uid": { ".read": "auth != null", ".write": "auth != null && auth.uid === $uid" } }
   }
 }
