@@ -32,9 +32,9 @@ node scripts/set-admin.mjs admin@example.com path/to/service-account.json
 
 ## Публикация на GitHub Pages
 
-Рабочая версия приложения находится в корневом `index.html`; исходный React/Vite-проект упакован в `pulse-source.zip`. Чтобы работать с исходниками локально, распакуйте архив и выполните команды из раздела «Запуск».
+Исходный React/Vite-проект находится в репозитории и упакован в `pulse-source.zip`. Чтобы работать с исходниками локально, распакуйте архив и выполните команды из раздела «Запуск».
 
-В **Settings → Pages → Build and deployment** выберите **GitHub Actions**. Workflow `.github/workflows/deploy.yml` распакует `pulse-source.zip`, соберёт приложение и опубликует его автоматически. В Firebase Authentication → Settings → Authorized domains добавьте домен GitHub Pages.
+В **Settings → Pages → Build and deployment** выберите **GitHub Actions**. Workflow `.github/workflows/deploy.yml` установит зависимости прямо из репозитория, соберёт приложение из исходников и опубликует его автоматически. В Firebase Authentication → Settings → Authorized domains добавьте домен GitHub Pages.
 
 ## Заметки
 
