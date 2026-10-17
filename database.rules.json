@@ -53,6 +53,20 @@
         }
       }
     },
+    "wallets": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
+        ".write": false
+      }
+    },
+    "giftInbox": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
+        ".write": false
+      }
+    },
+    "giftOperations": { ".read": false, ".write": false },
+    "adminGiftOperations": { ".read": false, ".write": false },
     "calls": { "$callId": { ".read": "auth != null && data.child('members').child(auth.uid).val() === true", ".write": "auth != null && newData.child('members').child(auth.uid).val() === true" } },
     "callInbox": {
       "$uid": {
