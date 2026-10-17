@@ -15,7 +15,7 @@
       "$to": { ".read": "auth != null && (auth.uid === $to || auth.uid === data.child('from').val())", "$request": { ".write": "auth != null && ((auth.uid === $to && newData.child('from').val() === data.child('from').val()) || (newData.child('from').val() === auth.uid && newData.child('to').val() === $to))" } }
     },
     "chats": {
-      "$chatId": { ".read": "auth != null && data.child('members').child(auth.uid).val() === true", ".write": "auth != null && newData.child('members').child(auth.uid).val() === true && (!data.exists() || data.child('members').child(auth.uid).val() === true)", "members": { ".write": "auth != null && newData.child(auth.uid).val() === true && (!data.exists() || data.child(auth.uid).val() === true)" }, "messages": { "$messageId": { ".write": "auth != null && newData.child('senderId').val() === auth.uid && root.child('chats').child($chatId).child('members').child(auth.uid).val() === true" } } }
+      "$chatId": { ".read": "auth != null && data.child('members').child(auth.uid).val() === true", ".write": "auth != null && newData.child('members').child(auth.uid).val() === true && (!data.exists() || data.child('members').child(auth.uid).val() === true)", "members": { ".write": "auth != null && newData.child(auth.uid).val() === true && (!data.exists() || data.child(auth.uid).val() === true)" }, "messages": { ".write": "auth != null && !newData.exists() && root.child('chats').child($chatId).child('members').child(auth.uid).val() === true", "$messageId": { ".write": "auth != null && newData.child('senderId').val() === auth.uid && root.child('chats').child($chatId).child('members').child(auth.uid).val() === true" } } }
     },
     "userChats": {
       "$uid": {
