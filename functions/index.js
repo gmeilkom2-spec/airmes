@@ -59,68 +59,6 @@ exports.claimHourlyCoins = onCall(CALLABLE_OPTIONS, async (request) => {
   return { coins: Number(wallet.coins) || 0, granted: result.committed ? granted : 0, nextClaimAt };
 });
 
-exports.sendGift = onCall(CALLABLE_OPTIONS, async (request) => {
-  const uid = requireUser(request);
-  const { recipientUid, giftType, message = '' } = request.data || {};
-  const operationId = getOperationId(request.data?.operationId);
-  const gift = getGift(giftType);
-  if (typeof recipientUid !== 'string' || recipientUid.length > 128 || recipientUid === uid) {
-    throw new HttpsError('invalid-argument', 'Выберите другого получателя.');
-  }
-  const safeMessage = typeof message === 'string' ? message.trim().slice(0, 120) : '';
-  const recipient = await db.ref(`users/${recipientUid}`).get();
-  if (!recipient.exists()) throw new HttpsError('not-found', 'Получатель не найден.');
-
-  const walletRef = db.ref(`wallets/${uid}`);
-  const generatedGiftId = db.ref(`giftInbox/${recipientUid}`).push().key;
-  let giftId = generatedGiftId;
-  let insufficient = false;
-  let operationMismatch = false;
-  const debit = await walletRef.transaction((current) => {
-    insufficient = false;
-    operationMismatch = false;
-    const wallet = current || { coins: 0, lastHourlyClaimAt: Date.now(), claimedGiftIds: {}, sentGiftOperations: {} };
-    const operations = wallet.sentGiftOperations || {};
-    if (operations[operationId]) {
-      const existing = typeof operations[operationId] === 'string' ? { giftId: operations[operationId] } : operations[operationId];
-      if (existing.recipientUid !== recipientUid || existing.giftType !== giftType) {
-        operationMismatch = true;
-        return wallet;
-      }
-      giftId = existing.giftId;
-      return wallet;
-    }
-    const coins = Number(wallet.coins) || 0;
-    if (coins < gift.price) {
-      insufficient = true;
-      return;
-    }
-    insufficient = false;
-    return {
-      ...wallet,
-      coins: coins - gift.price,
-      sentGiftOperations: { ...operations, [operationId]: { giftId: generatedGiftId, recipientUid, giftType } },
-    };
-  }, undefined, false);
-  if (operationMismatch) throw new HttpsError('already-exists', 'Этот запрос уже использован для другого подарка.');
-  if (!debit.committed && insufficient) throw new HttpsError('failed-precondition', 'Не хватает монет на этот подарок.');
-  const wallet = debit.snapshot.val();
-  const sentOperation = wallet?.sentGiftOperations?.[operationId];
-  giftId = (typeof sentOperation === 'string' ? sentOperation : sentOperation?.giftId) || giftId;
-  if (!giftId) throw new HttpsError('internal', 'Не удалось подготовить подарок.');
-
-  const giftRef = db.ref(`giftInbox/${recipientUid}/${giftId}`);
-  const existing = await giftRef.get();
-  if (!existing.exists()) {
-    await giftRef.set({
-      giftType: gift.id, name: gift.name, image: gift.image, redeemCoins: gift.redeemCoins,
-      senderId: uid, senderName: request.auth.token.name || 'Пользователь', message: safeMessage,
-      status: 'available', adminIssued: false, createdAt: Date.now(),
-    });
-  }
-  return { giftId, coins: Number(wallet.coins) || 0 };
-});
-
 exports.claimGift = onCall(CALLABLE_OPTIONS, async (request) => {
   const uid = requireUser(request);
   const giftId = request.data?.giftId;
