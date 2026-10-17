@@ -34,8 +34,8 @@
         "description": { ".write": "auth != null && (auth.token.admin === true || root.child('channels').child($channelId).child('ownerId').val() === auth.uid)", ".validate": "newData.isString() && newData.val().length <= 160" },
         "emoji": { ".write": "auth != null && (auth.token.admin === true || root.child('channels').child($channelId).child('ownerId').val() === auth.uid)" },
         "verified": { ".write": "auth != null && auth.token.admin === true", ".validate": "newData.val() === false || auth.token.admin === true" },
-        "lastMessage": { ".write": "auth != null && root.child('channels').child($channelId).child('members').child(auth.uid).val() === true" },
-        "lastAt": { ".write": "auth != null && root.child('channels').child($channelId).child('members').child(auth.uid).val() === true" },
+        "lastMessage": { ".write": "auth != null && root.child('channels').child($channelId).child('ownerId').val() === auth.uid" },
+        "lastAt": { ".write": "auth != null && root.child('channels').child($channelId).child('ownerId').val() === auth.uid" },
         "members": {
           "$uid": {
             ".write": "auth != null && auth.uid === $uid",
@@ -48,7 +48,7 @@
       "$channelId": {
         ".read": "auth != null && root.child('channels').child($channelId).child('members').child(auth.uid).val() === true",
         "$messageId": {
-          ".write": "auth != null && !data.exists() && root.child('channels').child($channelId).child('members').child(auth.uid).val() === true && newData.child('senderId').val() === auth.uid",
+          ".write": "auth != null && !data.exists() && root.child('channels').child($channelId).child('ownerId').val() === auth.uid && root.child('channels').child($channelId).child('members').child(auth.uid).val() === true && newData.child('senderId').val() === auth.uid",
           ".validate": "newData.hasChildren(['senderId', 'senderName', 'text', 'createdAt']) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 5000"
         }
       }
