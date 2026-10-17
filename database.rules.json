@@ -17,6 +17,15 @@
     "chats": {
       "$chatId": { ".read": "auth != null && data.child('members').child(auth.uid).val() === true", ".write": "auth != null && newData.child('members').child(auth.uid).val() === true", "members": { ".write": "auth != null && newData.child(auth.uid).val() === true" }, "messages": { "$messageId": { ".write": "auth != null && newData.child('senderId').val() === auth.uid && root.child('chats').child($chatId).child('members').child(auth.uid).val() === true" } } }
     },
+    "userChats": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$chatId": {
+          ".write": "auth != null && newData.val() === true && root.child('chats').child($chatId).child('members').child(auth.uid).val() === true && root.child('chats').child($chatId).child('members').child($uid).val() === true",
+          ".validate": "newData.isBoolean()"
+        }
+      }
+    },
     "channels": {
       ".read": "auth != null",
       "$channelId": {
