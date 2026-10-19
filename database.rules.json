@@ -7,15 +7,39 @@
       "$uid": {
         ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
         ".validate": "(!data.exists() && newData.child('verified').val() === false) || newData.child('verified').val() === data.child('verified').val() || auth.token.admin === true",
-        "admin": { ".validate": "newData.val() === data.val() || auth.token.admin === true" },
-        "connections": { "$other": { ".read": "auth != null && auth.uid === $uid", ".write": "auth != null && auth.uid === $uid" } }
+        "admin": {
+          ".validate": "newData.val() === data.val() || auth.token.admin === true"
+        },
+        "connections": {
+          "$other": {
+            ".read": "auth != null && auth.uid === $uid",
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        }
       }
     },
     "requests": {
-      "$to": { ".read": "auth != null && (auth.uid === $to || auth.uid === data.child('from').val())", "$request": { ".write": "auth != null && ((auth.uid === $to && newData.child('from').val() === data.child('from').val()) || (newData.child('from').val() === auth.uid && newData.child('to').val() === $to))" } }
+      "$to": {
+        ".read": "auth != null && (auth.uid === $to || auth.uid === data.child('from').val())",
+        "$request": {
+          ".write": "auth != null && ((auth.uid === $to && newData.child('from').val() === data.child('from').val()) || (newData.child('from').val() === auth.uid && newData.child('to').val() === $to))"
+        }
+      }
     },
     "chats": {
-      "$chatId": { ".read": "auth != null && data.child('members').child(auth.uid).val() === true", ".write": "auth != null && newData.child('members').child(auth.uid).val() === true && (!data.exists() || data.child('members').child(auth.uid).val() === true || (newData.child('peerId').val() !== auth.uid && newData.child('members').child(newData.child('peerId').val()).val() === true && root.child('users').child(auth.uid).child('connections').child(newData.child('peerId').val()).val() === true))", "members": { ".write": "auth != null && newData.child(auth.uid).val() === true && (!data.exists() || data.child(auth.uid).val() === true)" }, "messages": { ".write": "auth != null && !newData.exists() && root.child('chats').child($chatId).child('members').child(auth.uid).val() === true", "$messageId": { ".write": "auth != null && newData.child('senderId').val() === auth.uid && root.child('chats').child($chatId).child('members').child(auth.uid).val() === true" } } }
+      "$chatId": {
+        ".read": "auth != null && data.child('members').child(auth.uid).val() === true",
+        ".write": "auth != null && newData.child('members').child(auth.uid).val() === true && (!data.exists() || data.child('members').child(auth.uid).val() === true || (newData.child('peerId').val() !== auth.uid && newData.child('members').child(newData.child('peerId').val()).val() === true && root.child('users').child(auth.uid).child('connections').child(newData.child('peerId').val()).val() === true))",
+        "members": {
+          ".write": "auth != null && newData.child(auth.uid).val() === true && (!data.exists() || data.child(auth.uid).val() === true)"
+        },
+        "messages": {
+          ".write": "auth != null && !newData.exists() && root.child('chats').child($chatId).child('members').child(auth.uid).val() === true",
+          "$messageId": {
+            ".write": "auth != null && newData.child('senderId').val() === auth.uid && root.child('chats').child($chatId).child('members').child(auth.uid).val() === true"
+          }
+        }
+      }
     },
     "userChats": {
       "$uid": {
@@ -30,12 +54,27 @@
       ".read": "auth != null",
       "$channelId": {
         ".write": "auth != null && !data.exists() && newData.child('ownerId').val() === auth.uid",
-        "name": { ".write": "auth != null && (auth.token.admin === true || root.child('channels').child($channelId).child('ownerId').val() === auth.uid)", ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 50" },
-        "description": { ".write": "auth != null && (auth.token.admin === true || root.child('channels').child($channelId).child('ownerId').val() === auth.uid)", ".validate": "newData.isString() && newData.val().length <= 160" },
-        "emoji": { ".write": "auth != null && (auth.token.admin === true || root.child('channels').child($channelId).child('ownerId').val() === auth.uid)" },
-        "verified": { ".write": "auth != null && auth.token.admin === true", ".validate": "newData.val() === false || auth.token.admin === true" },
-        "lastMessage": { ".write": "auth != null && root.child('channels').child($channelId).child('ownerId').val() === auth.uid" },
-        "lastAt": { ".write": "auth != null && root.child('channels').child($channelId).child('ownerId').val() === auth.uid" },
+        "name": {
+          ".write": "auth != null && (auth.token.admin === true || root.child('channels').child($channelId).child('ownerId').val() === auth.uid)",
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 50"
+        },
+        "description": {
+          ".write": "auth != null && (auth.token.admin === true || root.child('channels').child($channelId).child('ownerId').val() === auth.uid)",
+          ".validate": "newData.isString() && newData.val().length <= 160"
+        },
+        "emoji": {
+          ".write": "auth != null && (auth.token.admin === true || root.child('channels').child($channelId).child('ownerId').val() === auth.uid)"
+        },
+        "verified": {
+          ".write": "auth != null && auth.token.admin === true",
+          ".validate": "newData.val() === false || auth.token.admin === true"
+        },
+        "lastMessage": {
+          ".write": "auth != null && root.child('channels').child($channelId).child('ownerId').val() === auth.uid"
+        },
+        "lastAt": {
+          ".write": "auth != null && root.child('channels').child($channelId).child('ownerId').val() === auth.uid"
+        },
         "members": {
           "$uid": {
             ".write": "auth != null && auth.uid === $uid",
@@ -62,12 +101,29 @@
     "giftInbox": {
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
-        ".write": false
+        "$giftId": {
+          ".write": "auth != null && auth.token.admin === true && !data.exists() && root.child('users').child($uid).exists()",
+          ".validate": "newData.hasChildren(['giftType','name','image','redeemCoins','senderId','senderName','status','adminIssued','createdAt']) && newData.child('senderId').val() === auth.uid && newData.child('senderName').val() === 'Pulse' && newData.child('status').val() === 'available' && newData.child('adminIssued').val() === true && (!newData.child('message').exists() || (newData.child('message').isString() && newData.child('message').val().length <= 120)) && newData.child('createdAt').isNumber() && newData.child('createdAt').val() <= now + 5000 && ((newData.child('giftType').val() === 'tree' && newData.child('name').val() === 'Ёлочка' && newData.child('image').val() === './gifts/tree.svg' && newData.child('redeemCoins').val() === 10) || (newData.child('giftType').val() === 'heart' && newData.child('name').val() === 'Сердечко' && newData.child('image').val() === './gifts/heart.svg' && newData.child('redeemCoins').val() === 18) || (newData.child('giftType').val() === 'plane' && newData.child('name').val() === 'Самолётик' && newData.child('image').val() === './gifts/plane.svg' && newData.child('redeemCoins').val() === 25) || (newData.child('giftType').val() === 'frog' && newData.child('name').val() === 'Лягушонок' && newData.child('image').val() === './gifts/frog.svg' && newData.child('redeemCoins').val() === 35))",
+          "$other": {
+            ".validate": "false"
+          }
+        }
       }
     },
-    "giftOperations": { ".read": false, ".write": false },
-    "adminGiftOperations": { ".read": false, ".write": false },
-    "calls": { "$callId": { ".read": "auth != null && data.child('members').child(auth.uid).val() === true", ".write": "auth != null && newData.child('members').child(auth.uid).val() === true" } },
+    "giftOperations": {
+      ".read": false,
+      ".write": false
+    },
+    "adminGiftOperations": {
+      ".read": false,
+      ".write": false
+    },
+    "calls": {
+      "$callId": {
+        ".read": "auth != null && data.child('members').child(auth.uid).val() === true",
+        ".write": "auth != null && newData.child('members').child(auth.uid).val() === true"
+      }
+    },
     "callInbox": {
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",
@@ -77,6 +133,36 @@
         }
       }
     },
-    "presence": { "$uid": { ".read": "auth != null", ".write": "auth != null && auth.uid === $uid" } }
+    "presence": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "giftClaims": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$giftId": {
+          ".write": "auth != null && auth.uid === $uid && !data.exists() && root.child('giftInbox').child($uid).child($giftId).child('status').val() === 'available' && newData.isNumber() && newData.val() >= now - 60000 && newData.val() <= now + 5000",
+          ".validate": "newData.isNumber() && newData.val() >= now - 60000 && newData.val() <= now + 5000"
+        }
+      }
+    },
+    "hourlyClaims": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid && newData.exists()",
+        ".validate": "newData.hasChildren(['total','lastClaimAt']) && ((!data.exists() && newData.child('total').val() === 1 && newData.child('lastClaimAt').val() >= now - 60000 && newData.child('lastClaimAt').val() <= now + 5000 && (!root.child('wallets').child($uid).child('lastHourlyClaimAt').exists() || now >= root.child('wallets').child($uid).child('lastHourlyClaimAt').val() + 3600000)) || (data.exists() && newData.child('total').val() === data.child('total').val() + 1 && newData.child('lastClaimAt').val() >= data.child('lastClaimAt').val() + 3600000 && newData.child('lastClaimAt').val() <= now + 5000))",
+        "total": {
+          ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() % 1 === 0"
+        },
+        "lastClaimAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "$other": {
+          ".validate": "false"
+        }
+      }
+    }
   }
 }
