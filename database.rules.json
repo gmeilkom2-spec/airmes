@@ -82,7 +82,7 @@
             ".validate": "newData.isBoolean()"
           }
         },
-        ".validate": "data.exists() ? ((!data.child('username').exists() && !newData.child('username').exists()) || newData.child('username').val() === data.child('username').val()) : newData.hasChildren(['ownerId','name','username','createdAt','members']) && newData.child('ownerId').val() === auth.uid && root.child('channelUsernames').child(newData.child('username').val()).child('ownerId').val() === auth.uid && root.child('channelUsernames').child(newData.child('username').val()).child('channelId').val() === $channelId",
+        ".validate": "data.exists() ? ((!data.child('username').exists() && !newData.child('username').exists()) || newData.child('username').val() === data.child('username').val()) : newData.hasChildren(['ownerId','name','username','createdAt']) && !newData.child('members').exists() && newData.child('ownerId').val() === auth.uid && root.child('channelUsernames').child(newData.child('username').val()).child('ownerId').val() === auth.uid && root.child('channelUsernames').child(newData.child('username').val()).child('channelId').val() === $channelId",
         "username": {
           ".write": "auth != null && !root.child('channels').child($channelId).exists() && root.child('channelUsernames').child(newData.val()).child('ownerId').val() === auth.uid && root.child('channelUsernames').child(newData.val()).child('channelId').val() === $channelId",
           ".validate": "newData.isString() && newData.val().length >= 3 && newData.val().length <= 24 && root.child('channelUsernames').child(newData.val()).child('ownerId').val() === auth.uid && root.child('channelUsernames').child(newData.val()).child('channelId').val() === $channelId"
@@ -91,9 +91,9 @@
     },
     "channelMessages": {
       "$channelId": {
-        ".read": "auth != null && root.child('channels').child($channelId).child('members').child(auth.uid).val() === true",
+        ".read": "auth != null && (root.child('channels').child($channelId).child('members').child(auth.uid).val() === true || root.child('channels').child($channelId).child('ownerId').val() === auth.uid)",
         "$messageId": {
-          ".write": "auth != null && !data.exists() && root.child('channels').child($channelId).child('ownerId').val() === auth.uid && root.child('channels').child($channelId).child('members').child(auth.uid).val() === true && newData.child('senderId').val() === auth.uid",
+          ".write": "auth != null && !data.exists() && root.child('channels').child($channelId).child('ownerId').val() === auth.uid && newData.child('senderId').val() === auth.uid",
           ".validate": "newData.hasChildren(['senderId', 'senderName', 'text', 'createdAt']) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 5000"
         }
       }
