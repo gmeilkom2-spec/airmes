@@ -104,6 +104,21 @@
         ".write": false
       }
     },
+    "coinGrants": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
+        "$grantId": {
+          ".write": "auth != null && auth.token.admin === true && !data.exists() && newData.exists()",
+          ".validate": "newData.hasChildren(['amount','by','byName','createdAt']) && newData.child('amount').isNumber() && newData.child('amount').val() >= 1 && newData.child('amount').val() <= 1000000 && newData.child('amount').val() % 1 === 0 && newData.child('by').val() === auth.uid && newData.child('byName').isString() && newData.child('byName').val().length <= 60 && newData.child('createdAt').isNumber() && newData.child('createdAt').val() > 0 && newData.child('createdAt').val() <= now + 5000 && (!newData.child('reason').exists() || (newData.child('reason').isString() && newData.child('reason').val().length <= 120))",
+          "amount": { ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 1000000 && newData.val() % 1 === 0" },
+          "by": { ".validate": "newData.isString() && newData.val() === auth.uid" },
+          "byName": { ".validate": "newData.isString() && newData.val().length <= 60" },
+          "createdAt": { ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= now + 5000" },
+          "reason": { ".validate": "newData.isString() && newData.val().length <= 120" },
+          "$other": { ".validate": false }
+        }
+      }
+    },
     "giftInbox": {
       "$uid": {
         ".read": "auth != null && (auth.token.admin === true || !root.child('moderation').child('bans').child(auth.uid).child('until').exists() || root.child('moderation').child('bans').child(auth.uid).child('until').val() <= now) && (auth.uid === $uid || auth.token.admin === true)",
