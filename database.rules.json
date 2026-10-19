@@ -81,6 +81,11 @@
             ".write": "auth != null && auth.uid === $uid",
             ".validate": "newData.isBoolean()"
           }
+        },
+        ".validate": "data.exists() ? ((!data.child('username').exists() && !newData.child('username').exists()) || newData.child('username').val() === data.child('username').val()) : newData.hasChildren(['ownerId','name','username','createdAt','members']) && newData.child('ownerId').val() === auth.uid && root.child('channelUsernames').child(newData.child('username').val()).child('ownerId').val() === auth.uid && root.child('channelUsernames').child(newData.child('username').val()).child('channelId').val() === $channelId",
+        "username": {
+          ".write": "auth != null && !root.child('channels').child($channelId).exists() && root.child('channelUsernames').child(newData.val()).child('ownerId').val() === auth.uid && root.child('channelUsernames').child(newData.val()).child('channelId').val() === $channelId",
+          ".validate": "newData.isString() && newData.val().length >= 3 && newData.val().length <= 24 && root.child('channelUsernames').child(newData.val()).child('ownerId').val() === auth.uid && root.child('channelUsernames').child(newData.val()).child('channelId').val() === $channelId"
         }
       }
     },
@@ -171,6 +176,13 @@
           ".write": "auth != null && auth.uid === $uid && !data.exists() && newData.child('senderId').val() === auth.uid && newData.child('recipientUid').val() !== auth.uid && root.child('users').child(auth.uid).child('connections').child(newData.child('recipientUid').val()).val() === true",
           ".validate": "newData.hasChildren(['giftType','costCoins','recipientUid','senderId','createdAt']) && newData.child('senderId').val() === auth.uid && newData.child('recipientUid').isString() && newData.child('recipientUid').val() !== auth.uid && newData.child('createdAt').isNumber() && newData.child('createdAt').val() <= now + 5000 && ((newData.child('giftType').val() === \"mask\" && newData.child('costCoins').val() === 75) || (newData.child('giftType').val() === \"mad-pumpkin\" && newData.child('costCoins').val() === 90) || (newData.child('giftType').val() === \"statue-of-liberty\" && newData.child('costCoins').val() === 120) || (newData.child('giftType').val() === \"gravestone\" && newData.child('costCoins').val() === 100) || (newData.child('giftType').val() === \"durovs-sunglasses\" && newData.child('costCoins').val() === 150) || (newData.child('giftType').val() === \"algorithm-cup\" && newData.child('costCoins').val() === 180) || (newData.child('giftType').val() === \"candle-lamp\" && newData.child('costCoins').val() === 65) || (newData.child('giftType').val() === \"kitty-medallion\" && newData.child('costCoins').val() === 160) || (newData.child('giftType').val() === \"plush-pepe\" && newData.child('costCoins').val() === 250))"
         }
+      }
+    },
+    "channelUsernames": {
+      ".read": "auth != null",
+      "$username": {
+        ".write": "auth != null && ((!data.exists() && newData.child('ownerId').val() === auth.uid && newData.child('channelId').isString()) || (data.child('ownerId').val() === auth.uid && !newData.exists()))",
+        ".validate": "newData.hasChildren(['ownerId','channelId']) && newData.child('ownerId').isString() && newData.child('channelId').isString() && newData.child('channelId').val().length > 0"
       }
     }
   }
