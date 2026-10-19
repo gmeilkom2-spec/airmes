@@ -16,6 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: unzip pulse-source.zip -d source
+      - name: Apply repository source overrides
+        run: |
+          if [ -f App.jsx ]; then cp App.jsx source/src/App.jsx; fi
+          if [ -f styles.css ]; then cp styles.css source/src/styles.css; fi
+          if [ -f database.rules.json ]; then cp database.rules.json source/database.rules.json; fi
+          if [ -f README.md ]; then cp README.md source/README.md; fi
       - uses: actions/setup-node@v4
         with:
           node-version: 20
