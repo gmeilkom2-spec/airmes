@@ -10,7 +10,7 @@ const chatKey = (a,b) => [a,b].sort().join('_');
 const stamp = (n) => n ? new Date(n).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '';
 const avatarEmojis=['🙂','😎','🤩','😺','🐼','🦊','🐸','🐻','🐨','🐯','🐰','🐶','🦄','🐙','🦋','🌻','🍀','🍓','🍕','⚽','🎧','🎨','🚀','🌈','🔥','💎','👑','💜','💙','🧡','🤍','🖤'];
 const presenceStatuses=[{id:'online',label:'В сети',description:'Показывать, что вы активны'},{id:'idle',label:'Неактивен',description:'Вы временно отошли'},{id:'dnd',label:'Не беспокоить',description:'Отображаться как занятый'},{id:'invisible',label:'Невидимый',description:'Для других вы не в сети'}];
-const personalAvatarUsername='velikysozdatel';
+const personalAvatarUsername='pypik';
 function hasPersonalAvatar(user){return user?.username?.toLowerCase()===personalAvatarUsername;}
 function Avatar({ user, size='', online=false, status }) { const shownStatus=status||(online?'online':''); return <span className={['avatar',size,shownStatus?'has-status':'',shownStatus?'status-'+shownStatus:''].filter(Boolean).join(' ')} aria-label={user?.displayName||user?.email||'Аватар'}>{hasPersonalAvatar(user)?<img src="./owner-avatar.jpg" alt="" draggable="false"/>:(user?.avatarEmoji||'🙂')} {shownStatus&&<i/>}</span>; }
 function ManualStatusPicker({value='online',onChange,disabled=false,variant=''}) {
